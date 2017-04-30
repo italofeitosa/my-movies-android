@@ -1,10 +1,9 @@
 package br.com.wellingtoncosta.mymovies.dagger;
 
-import android.app.Activity;
-
 import javax.inject.Singleton;
 
-import br.com.wellingtoncosta.mymovies.dagger.modules.NetworkModule;
+import br.com.wellingtoncosta.mymovies.activity.LoginActivity;
+
 import dagger.Component;
 
 /**
@@ -14,6 +13,6 @@ import dagger.Component;
 @Component(modules = {NetworkModule.class})
 public interface NetworkComponent {
 
-    void inject(Activity activity);
+    void inject(LoginActivity activity);
 
 }

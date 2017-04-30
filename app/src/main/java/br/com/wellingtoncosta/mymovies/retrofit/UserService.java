@@ -1,11 +1,8 @@
 package br.com.wellingtoncosta.mymovies.retrofit;
 
-import java.util.List;
-
 import br.com.wellingtoncosta.mymovies.domain.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 /**
@@ -13,12 +10,9 @@ import retrofit2.http.POST;
  */
 public interface UserService {
 
-    String ENDPONIT = "users/";
+    String ENDPOINT = "api/users";
 
-    @GET(ENDPONIT)
-    Call<List<User>> getUsers();
-
-    @POST(ENDPONIT)
+    @POST(ENDPOINT)
     Call<User> saveNewUser(@Body User user);
 
 }

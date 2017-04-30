@@ -1,7 +1,5 @@
 package br.com.wellingtoncosta.mymovies.dagger;
 
-import android.util.Log;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,7 +38,6 @@ public class NetworkModule {
     @Provides
     @Singleton
     UserService provideUserService(Retrofit retrofit) {
-        Log.i("user serivce", String.valueOf(retrofit));
         return retrofit.create(UserService.class);
     }
 
