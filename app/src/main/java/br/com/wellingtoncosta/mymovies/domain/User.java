@@ -1,10 +1,14 @@
 package br.com.wellingtoncosta.mymovies.domain;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * @author Wellington Costa on 27/04/17.
  */
-public class User {
+public class User extends RealmObject {
 
+    @PrimaryKey
     private Long id;
 
     private String name;

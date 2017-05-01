@@ -1,27 +1,38 @@
 package br.com.wellingtoncosta.mymovies;
 
-import br.com.wellingtoncosta.mymovies.dagger.DaggerNetworkComponent;
-import br.com.wellingtoncosta.mymovies.dagger.NetworkComponent;
+import br.com.wellingtoncosta.mymovies.dagger.DaggerAppComponent;
+import br.com.wellingtoncosta.mymovies.dagger.AppComponent;
 import br.com.wellingtoncosta.mymovies.dagger.NetworkModule;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * @author Wellington Costa on 30/04/17.
  */
 public class Application extends android.app.Application {
 
-    private NetworkComponent networkComponent;
+    private AppComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        networkComponent = DaggerNetworkComponent
+        initRealmConfiguration();
+
+        appComponent = DaggerAppComponent
                 .builder()
                 .networkModule(new NetworkModule())
                 .build();
     }
 
-    public NetworkComponent component() {
-        return networkComponent;
+    private void initRealmConfiguration() {
+        Realm.init(this);
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+    }
+
+    public AppComponent component() {
+        return appComponent;
     }
 }
