@@ -5,13 +5,13 @@ import android.support.design.widget.TextInputLayout;
 /**
  * @author Wellington Costa on 01/05/17.
  */
-abstract class Validator {
+public abstract class Validator {
 
     TextInputLayout layout;
 
     String pattern;
 
-    String errorMessage;
+    private String errorMessage;
 
 
     Validator(TextInputLayout layout, String pattern, String errorMessage) {
@@ -26,40 +26,24 @@ abstract class Validator {
         this.errorMessage = errorMessage;
     }
 
-    abstract boolean validate();
+    public abstract boolean validate();
 
-    /*boolean validate() {
-        boolean isValid = true;
-        EditText editText = layout.getEditText();
-
-        if (editText != null) {
-            String value = editText.getText().toString();
-
-            if (!pattern.isEmpty()) {
-                boolean found = Pattern.matches(pattern, value);
-                if (!found) {
-                    setErrorLayout();
-                    isValid = false;
-                } else {
-                    clearErrorLayout();
-                }
-            } else if (value.isEmpty()) {
-                setErrorLayout();
-                isValid = false;
-            } else {
-                clearErrorLayout();
-            }
-        }
-
-        return isValid;
-    }*/
-
-    private void setErrorLayout() {
+    void setErrorLayout() {
         layout.setErrorEnabled(true);
         layout.setError(errorMessage);
     }
 
-    private void clearErrorLayout() {
+    void setErrorLayout(TextInputLayout layout, String errorMessage) {
+        layout.setErrorEnabled(true);
+        layout.setError(errorMessage);
+    }
+
+    void clearErrorLayout() {
+        layout.setErrorEnabled(false);
+        layout.setError(null);
+    }
+
+    void clearErrorLayout(TextInputLayout layout) {
         layout.setErrorEnabled(false);
         layout.setError(null);
     }
