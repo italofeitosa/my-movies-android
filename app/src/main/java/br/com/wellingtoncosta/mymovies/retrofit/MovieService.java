@@ -24,11 +24,20 @@ public interface MovieService {
     @GET(ENDPOINT_MOVIES)
     Call<Movie> getAllMovies();
 
+    @GET(ENDPOINT_MOVIES + "/{id}")
+    Call<Movie> findMovieById(@Path("id") Long id);
+
     @GET(ENDPOINT_MOVIES + "/name/{name}")
     Call<Movie> getAllMoviesByName(@Path("name") String name);
 
     @GET(ENDPOINT_FAVORITE_MOVIES)
     Call<List<FavoriteMovie>> getAllFavoriteMovies();
+
+    @GET(ENDPOINT_FAVORITE_MOVIES + "/{id}")
+    Call<FavoriteMovie> findFavoriteMovieById(@Path("id") Long id);
+
+    @GET(ENDPOINT_FAVORITE_MOVIES + "/movie/{id}")
+    Call<FavoriteMovie> findFavoriteMovieByMovieId(@Path("id") Long movieId);
 
     @GET(ENDPOINT_FAVORITE_MOVIES + "/name/{name}")
     Call<List<FavoriteMovie>> getFavoriteMoviesByName(@Path("name") String name);
