@@ -11,7 +11,7 @@ public abstract class Validator {
 
     String pattern;
 
-    private String errorMessage;
+    String errorMessage;
 
 
     Validator(TextInputLayout layout, String pattern, String errorMessage) {

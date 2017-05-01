@@ -36,6 +36,14 @@ public class PasswordValidatior extends Validator {
             if (password.isEmpty()) {
                 setErrorLayout();
                 isValid = false;
+            } else {
+                clearErrorLayout();
+                clearErrorLayout(confirmPasswordLayout);
+            }
+
+            if (confirmPassword.isEmpty()) {
+                setErrorLayout(confirmPasswordLayout, errorMessage);
+                isValid = false;
             } else if (!password.equals(confirmPassword)) {
                 setErrorLayout(confirmPasswordLayout, confirmPasswordErrorMessage);
                 isValid = false;
