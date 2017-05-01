@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Meus Filmes</string>
     <string name="confirm_password">Confirmar Senha</string>
+    <string name="different_password">Senha diferente</string>
     <string name="email">E-mail</string>
+    <string name="field_required">Campo obrigatório</string>
+    <string name="invalid_email">E-mail inválido</string>
     <string name="loading">Carregando&#8230;</string>
     <string name="login">Login</string>
     <string name="login_account">Entrar</string>
@@ -10,4 +13,6 @@
     <string name="password">Senha</string>
     <string name="register_new_user">Novo Usuário</string>
     <string name="register">Cadastrar</string>
+    <string name="save_data_local_failure">Não foi possível salvar os dados.</string>
+    <string name="server_communication_error">Não foi possível se conectar com o servidor.</string>
 </resources>
