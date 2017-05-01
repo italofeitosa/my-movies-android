@@ -48,7 +48,8 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/passwordLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/passwordField"
@@ -63,7 +64,8 @@
     <android.support.design.widget.TextInputLayout
         android:id="@+id/confirmPasswordLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true">
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/confirmPasswordField"
