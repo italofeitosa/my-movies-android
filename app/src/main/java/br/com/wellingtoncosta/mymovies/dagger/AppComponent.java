@@ -4,6 +4,8 @@ import javax.inject.Singleton;
 
 import br.com.wellingtoncosta.mymovies.activity.LoginActivity;
 
+import br.com.wellingtoncosta.mymovies.activity.MoviesActivity;
+import br.com.wellingtoncosta.mymovies.activity.SplashActivity;
 import br.com.wellingtoncosta.mymovies.activity.UserRegistrationActivity;
 import dagger.Component;
 
@@ -14,7 +16,9 @@ import dagger.Component;
 @Component(modules = {NetworkModule.class, RealmModule.class})
 public interface AppComponent {
 
+    void inject(SplashActivity activity);
     void inject(LoginActivity activity);
-    void inject( UserRegistrationActivity activity);
+    void inject(UserRegistrationActivity activity);
+    void inject(MoviesActivity activity);
 
 }
