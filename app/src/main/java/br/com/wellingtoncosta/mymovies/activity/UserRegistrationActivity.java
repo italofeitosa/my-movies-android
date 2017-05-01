@@ -15,7 +15,7 @@ import butterknife.OnEditorAction;
 /**
  * @author Wellington Costa on 26/04/17.
  */
-public class UserRegisterActivity extends AppCompatActivity {
+public class UserRegistrationActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;

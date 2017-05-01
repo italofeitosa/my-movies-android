@@ -23,7 +23,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".activity.UserRegisterActivity"
+            android:name=".activity.UserRegistrationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
