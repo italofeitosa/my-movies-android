@@ -11,7 +11,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -135,17 +134,21 @@ public class UserRegistrationActivity extends AppCompatActivity {
             userService.saveNewUser(user).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.code() != 201) {
-                        handleResponseError(response);
-                    } else {
+                    Log.i("coda", String.valueOf(response.code()));
+                    if (response.code() == 201) {
                         saveNewUserLocal(response.body());
+                    }
+                    else if (response.code() == 409) {
+                        handleUserAlreadyExistsException(response);
+                    } else {
+                        Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
                     Log.e("UserRegistrationError", t.getMessage());
-                    Toast.makeText(UserRegistrationActivity.this, R.string.server_communication_error, Toast.LENGTH_LONG).show();
+                    Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                 }
             });
         }
@@ -167,7 +170,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         return user;
     }
 
-    private void handleResponseError(Response<User> response) {
+    private void handleUserAlreadyExistsException(Response<User> response) {
         try {
             ResponseException exception = gson.fromJson(response.errorBody().string(), ResponseException.class);
             Snackbar.make(toolbar, exception.getMessage(), Snackbar.LENGTH_LONG).show();
@@ -195,7 +198,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
             @Override
             public void onError(Throwable error) {
                 Log.e("exception", error.getMessage(), error);
-                Toast.makeText(UserRegistrationActivity.this, R.string.save_data_local_failure, Toast.LENGTH_LONG).show();
+                Snackbar.make(toolbar, R.string.save_data_local_failure, Snackbar.LENGTH_LONG).show();
             }
         });
     }
