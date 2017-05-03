@@ -11,6 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="br.com.wellingtoncosta.mymovies.activity.MoviesActivity"
-    tools:showIn="@layout/app_bar_movies">
+    tools:showIn="@layout/activity_movies">
 
 </RelativeLayout>
