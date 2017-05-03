@@ -1,7 +1,7 @@
 package br.com.wellingtoncosta.mymovies;
 
-import br.com.wellingtoncosta.mymovies.dagger.DaggerAppComponent;
 import br.com.wellingtoncosta.mymovies.dagger.AppComponent;
+import br.com.wellingtoncosta.mymovies.dagger.DaggerAppComponent;
 import br.com.wellingtoncosta.mymovies.dagger.NetworkModule;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
