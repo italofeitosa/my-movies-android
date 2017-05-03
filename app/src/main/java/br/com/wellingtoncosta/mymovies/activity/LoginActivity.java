@@ -5,9 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -90,7 +94,14 @@ public class LoginActivity extends AppCompatActivity {
     private User buildUser() {
         User user = new User();
         user.setEmail(emailField.getText().toString());
-        user.setPassword(passwordField.getText().toString()); // TODO encrypt password
+
+        try {
+            byte[] bytes = passwordField.getText().toString().getBytes("UTF-8");
+            String encryptedPassword = Base64.encodeToString(bytes, Base64.DEFAULT);
+            user.setPassword(encryptedPassword);
+        } catch (IOException e) {
+            Log.e("exception", e.getMessage(), e);
+        }
 
         return user;
     }

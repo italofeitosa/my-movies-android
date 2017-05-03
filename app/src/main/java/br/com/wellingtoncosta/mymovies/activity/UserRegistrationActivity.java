@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -154,7 +155,14 @@ public class UserRegistrationActivity extends AppCompatActivity {
         User user = new User();
         user.setName(nameField.getText().toString());
         user.setEmail(emailField.getText().toString());
-        user.setPassword(passwordField.getText().toString()); // TODO encrypt password
+
+        try {
+            byte[] bytes = passwordField.getText().toString().getBytes("UTF-8");
+            String encryptedPassword = Base64.encodeToString(bytes, Base64.DEFAULT);
+            user.setPassword(encryptedPassword);
+        } catch (IOException e) {
+            Log.e("exception", e.getMessage(), e);
+        }
 
         return user;
     }
