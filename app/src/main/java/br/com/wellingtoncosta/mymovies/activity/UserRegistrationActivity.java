@@ -1,5 +1,6 @@
 package br.com.wellingtoncosta.mymovies.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -130,23 +131,26 @@ public class UserRegistrationActivity extends AppCompatActivity {
     public void saveNewUser() {
         if (validation.validate()) {
             User user = buildNewUser();
+            final ProgressDialog progress = ProgressDialog.show(this, "Aguarde...", "Salvando seus dados...", true);
+            progress.setCancelable(false);
 
             userService.saveNewUser(user).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    Log.i("coda", String.valueOf(response.code()));
                     if (response.code() == 201) {
-                        saveNewUserLocal(response.body());
+                        saveNewUserLocal(response.body(), progress);
                     }
                     else if (response.code() == 409) {
-                        handleUserAlreadyExistsException(response);
+                        handleUserAlreadyExistsException(response, progress);
                     } else {
+                        progress.dismiss();
                         Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
+                    progress.dismiss();
                     Log.e("UserRegistrationError", t.getMessage());
                     Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                 }
@@ -170,8 +174,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
         return user;
     }
 
-    private void handleUserAlreadyExistsException(Response<User> response) {
+    private void handleUserAlreadyExistsException(Response<User> response, ProgressDialog progress) {
         try {
+            progress.dismiss();
             ResponseException exception = gson.fromJson(response.errorBody().string(), ResponseException.class);
             Snackbar.make(toolbar, exception.getMessage(), Snackbar.LENGTH_LONG).show();
         } catch (IOException e) {
@@ -179,7 +184,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }
     }
 
-    private void saveNewUserLocal(final User user) {
+    private void saveNewUserLocal(final User user, final ProgressDialog progress) {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
@@ -191,12 +196,14 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
+                progress.dismiss();
                 finish();
                 startActivity(new Intent(UserRegistrationActivity.this, MoviesActivity.class));
             }
         }, new Realm.Transaction.OnError() {
             @Override
             public void onError(Throwable error) {
+                progress.dismiss();
                 Log.e("exception", error.getMessage(), error);
                 Snackbar.make(toolbar, R.string.save_data_local_failure, Snackbar.LENGTH_LONG).show();
             }
