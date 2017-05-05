@@ -7,6 +7,8 @@ import br.com.wellingtoncosta.mymovies.validation.validators.Validator;
 
 /**
  * @author Wellington Costa on 01/05/17.
+ *
+ * TODO create an annotation-based library
  */
 public class Validation {
 
