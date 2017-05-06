@@ -2,11 +2,11 @@ package br.com.wellingtoncosta.mymovies.dagger;
 
 import javax.inject.Singleton;
 
-import br.com.wellingtoncosta.mymovies.activity.LoginActivity;
+import br.com.wellingtoncosta.mymovies.ui.LoginActivity;
 
-import br.com.wellingtoncosta.mymovies.activity.MoviesActivity;
-import br.com.wellingtoncosta.mymovies.activity.SplashActivity;
-import br.com.wellingtoncosta.mymovies.activity.UserRegistrationActivity;
+import br.com.wellingtoncosta.mymovies.ui.MoviesActivity;
+import br.com.wellingtoncosta.mymovies.ui.SplashActivity;
+import br.com.wellingtoncosta.mymovies.ui.UserRegistrationActivity;
 import dagger.Component;
 
 /**

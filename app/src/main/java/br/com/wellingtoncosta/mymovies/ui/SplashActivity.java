@@ -1,4 +1,4 @@
-package br.com.wellingtoncosta.mymovies.activity;
+package br.com.wellingtoncosta.mymovies.ui;
 
 import android.app.Activity;
 import android.content.Intent;

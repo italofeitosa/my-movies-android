@@ -1,4 +1,4 @@
-package br.com.wellingtoncosta.mymovies.activity;
+package br.com.wellingtoncosta.mymovies.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;

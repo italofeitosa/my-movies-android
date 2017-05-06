@@ -12,7 +12,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:focusableInTouchMode="true"
-    tools:context="br.com.wellingtoncosta.mymovies.activity.UserRegistrationActivity"
+    tools:context="br.com.wellingtoncosta.mymovies.ui.UserRegistrationActivity"
     tools:showIn="@layout/activity_user_register">
 
     <android.support.design.widget.TextInputLayout
