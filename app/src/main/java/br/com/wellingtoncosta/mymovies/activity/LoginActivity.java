@@ -2,6 +2,7 @@ package br.com.wellingtoncosta.mymovies.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +10,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -18,7 +20,8 @@ import javax.inject.Inject;
 import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.User;
-import br.com.wellingtoncosta.mymovies.retrofit.UserService;
+import br.com.wellingtoncosta.mymovies.exception.ErrorResponse;
+import br.com.wellingtoncosta.mymovies.retrofit.AuthenticationService;
 import br.com.wellingtoncosta.mymovies.validation.Validation;
 import br.com.wellingtoncosta.mymovies.validation.validators.EmailValidator;
 import br.com.wellingtoncosta.mymovies.validation.validators.NotEmptyValidator;
@@ -26,6 +29,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * @author Wellington Costa on 26/04/17.
@@ -48,7 +54,10 @@ public class LoginActivity extends AppCompatActivity {
     EditText passwordField;
 
     @Inject
-    UserService userService;
+    AuthenticationService authenticationService;
+
+    @Inject
+    Gson gson;
 
     private Validation validation;
 
@@ -86,8 +95,32 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.loginButton)
     public void login() {
         if (validation.validate()) {
-            User user = buildUser(); // TODO call API login
-            Toast.makeText(this, "Logar", Toast.LENGTH_LONG).show();
+            User user = buildUser();
+            authenticationService.login(user).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful()) {
+                        startActivity(new Intent(LoginActivity.this, MoviesActivity.class));
+                    } else {
+                        handleErrorResponse(response);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.e("LoginError", t.getMessage());
+                    Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
+
+    private void handleErrorResponse(Response<User> response) {
+        try {
+            ErrorResponse errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
+            Snackbar.make(toolbar, errorResponse.getMessage(), Snackbar.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("exception", e.getMessage(), e);
         }
     }
 
