@@ -17,6 +17,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="new_user_label">Novo usuário? Cadastre-se agora!</string>
+    <string name="no_movies">Sem filmes cadastrados</string>
     <string name="password">Senha</string>
     <string name="register_new_user">Novo Usuário</string>
     <string name="register">Cadastrar</string>
