@@ -13,7 +13,7 @@ import dagger.Component;
  * @author Wellington Costa on 30/04/17.
  */
 @Singleton
-@Component(modules = {NetworkModule.class, RealmModule.class})
+@Component(modules = {NetworkModule.class, AppModule.class})
 public interface AppComponent {
 
     void inject(SplashActivity activity);

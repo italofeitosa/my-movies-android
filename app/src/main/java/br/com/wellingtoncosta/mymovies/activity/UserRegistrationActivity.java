@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.User;
-import br.com.wellingtoncosta.mymovies.exception.ResponseException;
+import br.com.wellingtoncosta.mymovies.exception.ErrorResponse;
 import br.com.wellingtoncosta.mymovies.retrofit.UserService;
 import br.com.wellingtoncosta.mymovies.validation.Validation;
 import br.com.wellingtoncosta.mymovies.validation.validators.EmailValidator;
@@ -88,15 +88,24 @@ public class UserRegistrationActivity extends AppCompatActivity {
         setupValidation();
     }
 
+    @Override
+    public void onBackPressed() {
+        goToLoginActivity();
+    }
+
     private void setupToolbar() {
         toolbar.setNavigationIcon(R.drawable.ic_back_arrow);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(UserRegistrationActivity.this, LoginActivity.class));
-                finish();
+                goToLoginActivity();
             }
         });
+    }
+
+    private void goToLoginActivity() {
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     private void setupValidation() {
@@ -137,11 +146,12 @@ public class UserRegistrationActivity extends AppCompatActivity {
             userService.saveNewUser(user).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    if (response.code() == 201) {
+                    if (response.isSuccessful()) {
                         saveNewUserLocal(response.body(), progress);
                     }
                     else if (response.code() == 409) {
-                        handleUserAlreadyExistsException(response, progress);
+                        progress.dismiss();
+                        handleUserAlreadyExistsException(response);
                     } else {
                         progress.dismiss();
                         Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
@@ -174,11 +184,10 @@ public class UserRegistrationActivity extends AppCompatActivity {
         return user;
     }
 
-    private void handleUserAlreadyExistsException(Response<User> response, ProgressDialog progress) {
+    private void handleUserAlreadyExistsException(Response<User> response) {
         try {
-            progress.dismiss();
-            ResponseException exception = gson.fromJson(response.errorBody().string(), ResponseException.class);
-            Snackbar.make(toolbar, exception.getMessage(), Snackbar.LENGTH_LONG).show();
+            ErrorResponse errorResponse = gson.fromJson(response.errorBody().string(), ErrorResponse.class);
+            Snackbar.make(toolbar, errorResponse.getMessage(), Snackbar.LENGTH_LONG).show();
         } catch (IOException e) {
             Log.e("exception", e.getMessage(), e);
         }
