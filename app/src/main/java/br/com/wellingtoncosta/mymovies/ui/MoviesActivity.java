@@ -1,8 +1,10 @@
 package br.com.wellingtoncosta.mymovies.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,6 +24,9 @@ import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
 import br.com.wellingtoncosta.mymovies.domain.User;
+import br.com.wellingtoncosta.mymovies.retrofit.AuthenticationService;
+import br.com.wellingtoncosta.mymovies.ui.fragment.FavoriteMoviesFragment;
+import br.com.wellingtoncosta.mymovies.ui.fragment.MoviesFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -35,9 +40,19 @@ public class MoviesActivity extends AppCompatActivity {
     RelativeLayout contentMovies;
 
     @Inject
+    AuthenticationService authenticationService;
+
+    @Inject
     Realm realm;
 
+    @Inject
+    SharedPreferences preferences;
+
     private Drawer drawer;
+
+    private MoviesFragment moviesFragment;
+
+    private FavoriteMoviesFragment favoriteMoviesFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +61,10 @@ public class MoviesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movies);
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+
+        moviesFragment = new MoviesFragment();
+        favoriteMoviesFragment = new FavoriteMoviesFragment();
+
         setupMaterialDrawer();
     }
 
@@ -60,16 +79,17 @@ public class MoviesActivity extends AppCompatActivity {
 
     private void setupMaterialDrawer() {
         View header = createHeaderDrawer();
-        PrimaryDrawerItem favoriteMoviesItem = createFavoriteDrawerItem();
+        PrimaryDrawerItem moviesItem = createMoviesDrawerItem();
+        PrimaryDrawerItem favoriteMoviesItem = createFavoriteMoviesDrawerItem();
         PrimaryDrawerItem logoutItem = createLogoutDrawerItem();
         drawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .addDrawerItems(favoriteMoviesItem, logoutItem)
+                .addDrawerItems(moviesItem, favoriteMoviesItem, logoutItem)
                 .withHeader(header)
                 .build();
 
-        drawer.setSelection(-1);
+        drawer.setSelection(1);
     }
 
     private View createHeaderDrawer() {
@@ -84,16 +104,39 @@ public class MoviesActivity extends AppCompatActivity {
         return headerView;
     }
 
-    private PrimaryDrawerItem createFavoriteDrawerItem() {
+    private PrimaryDrawerItem createMoviesDrawerItem() {
+        return new PrimaryDrawerItem()
+                .withIdentifier(1)
+                .withName(R.string.movies)
+                .withIcon(GoogleMaterial.Icon.gmd_list)
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(
+                                R.id.content_movies,
+                                moviesFragment
+                        );
+                        transaction.commit();
+                        return false;
+                    }
+                });
+    }
+
+    private PrimaryDrawerItem createFavoriteMoviesDrawerItem() {
         return new PrimaryDrawerItem()
                 .withIdentifier(1)
                 .withName(R.string.favorite_movies)
                 .withIcon(GoogleMaterial.Icon.gmd_favorite)
-                .withSelectable(false)
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        // TODO create favorite movies fragment
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                        transaction.replace(
+                                R.id.content_movies,
+                                favoriteMoviesFragment
+                        );
+                        transaction.commit();
                         return false;
                     }
                 });
@@ -124,7 +167,7 @@ public class MoviesActivity extends AppCompatActivity {
         }, new Realm.Transaction.OnSuccess() {
             @Override
             public void onSuccess() {
-                // TODO call API logout
+                preferences.edit().clear().apply();
                 MoviesActivity.this.startActivity(new Intent(MoviesActivity.this, LoginActivity.class));
                 finish();
             }
