@@ -1,27 +1,21 @@
 package br.com.wellingtoncosta.mymovies.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
-
-import javax.inject.Inject;
 
 import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.User;
 import br.com.wellingtoncosta.mymovies.exception.ErrorResponse;
-import br.com.wellingtoncosta.mymovies.retrofit.AuthenticationService;
 import br.com.wellingtoncosta.mymovies.validation.Validation;
 import br.com.wellingtoncosta.mymovies.validation.validators.EmailValidator;
 import br.com.wellingtoncosta.mymovies.validation.validators.NotEmptyValidator;
@@ -36,10 +30,7 @@ import retrofit2.Response;
 /**
  * @author Wellington Costa on 26/04/17.
  */
-public class LoginActivity extends AppCompatActivity {
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+public class LoginActivity extends SaveUserActivity {
 
     @BindView(R.id.emailLayout)
     TextInputLayout emailLayout;
@@ -52,12 +43,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @BindView(R.id.passwordField)
     EditText passwordField;
-
-    @Inject
-    AuthenticationService authenticationService;
-
-    @Inject
-    Gson gson;
 
     private Validation validation;
 
@@ -94,20 +79,28 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.loginButton)
     public void login() {
+        hideKeyboard();
+
         if (validation.validate()) {
             User user = buildUser();
+            final ProgressDialog progress = ProgressDialog.show(this, "Aguarde", "Efetuando o login...", true);
+            progress.setCancelable(false);
+
             authenticationService.login(user).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     if (response.isSuccessful()) {
-                        startActivity(new Intent(LoginActivity.this, MoviesActivity.class));
+                        saveNewUserLocal(response.body(), progress);
                     } else {
+                        progress.dismiss();
                         handleErrorResponse(response);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
+                    progress.dismiss();
+                    t.printStackTrace();
                     Log.e("LoginError", t.getMessage());
                     Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                 }

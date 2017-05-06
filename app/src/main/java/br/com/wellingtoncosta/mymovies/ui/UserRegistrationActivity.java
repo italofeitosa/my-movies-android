@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
-
-import com.google.gson.Gson;
 
 import java.io.IOException;
 
@@ -32,7 +29,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
-import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +36,7 @@ import retrofit2.Response;
 /**
  * @author Wellington Costa on 26/04/17.
  */
-public class UserRegistrationActivity extends AppCompatActivity {
+public class UserRegistrationActivity extends SaveUserActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -68,12 +64,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
     @Inject
     UserService userService;
-
-    @Inject
-    Gson gson;
-
-    @Inject
-    Realm realm;
 
     private Validation validation;
 
@@ -138,9 +128,11 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
     @OnClick(R.id.saveNewUserButton)
     public void saveNewUser() {
+        hideKeyboard();
+
         if (validation.validate()) {
             User user = buildNewUser();
-            final ProgressDialog progress = ProgressDialog.show(this, "Aguarde...", "Salvando seus dados...", true);
+            final ProgressDialog progress = ProgressDialog.show(this, "Aguarde", "Salvando seus dados...", true);
             progress.setCancelable(false);
 
             userService.saveNewUser(user).enqueue(new Callback<User>() {
@@ -161,6 +153,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
                     progress.dismiss();
+                    t.printStackTrace();
                     Log.e("UserRegistrationError", t.getMessage());
                     Snackbar.make(toolbar, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
                 }
@@ -193,29 +186,4 @@ public class UserRegistrationActivity extends AppCompatActivity {
         }
     }
 
-    private void saveNewUserLocal(final User user, final ProgressDialog progress) {
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm bgRealm) {
-                User newUser = bgRealm.createObject(User.class, user.getId());
-                newUser.setName(user.getName());
-                newUser.setEmail(user.getEmail());
-                newUser.setPassword(user.getPassword());
-            }
-        }, new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                progress.dismiss();
-                finish();
-                startActivity(new Intent(UserRegistrationActivity.this, MoviesActivity.class));
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                progress.dismiss();
-                Log.e("exception", error.getMessage(), error);
-                Snackbar.make(toolbar, R.string.save_data_local_failure, Snackbar.LENGTH_LONG).show();
-            }
-        });
-    }
 }

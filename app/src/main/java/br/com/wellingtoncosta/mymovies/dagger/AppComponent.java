@@ -2,6 +2,7 @@ package br.com.wellingtoncosta.mymovies.dagger;
 
 import javax.inject.Singleton;
 
+import br.com.wellingtoncosta.mymovies.ui.SaveUserActivity;
 import br.com.wellingtoncosta.mymovies.ui.LoginActivity;
 
 import br.com.wellingtoncosta.mymovies.ui.MoviesActivity;
@@ -17,6 +18,7 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject(SplashActivity activity);
+    void inject(SaveUserActivity activity);
     void inject(LoginActivity activity);
     void inject(UserRegistrationActivity activity);
     void inject(MoviesActivity activity);

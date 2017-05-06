@@ -2,7 +2,6 @@ package br.com.wellingtoncosta.mymovies.retrofit;
 
 import br.com.wellingtoncosta.mymovies.domain.User;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
@@ -15,6 +14,4 @@ public interface AuthenticationService {
     @POST("login")
     Call<User> login(@Body User user);
 
-    @POST("logout")
-    Call<Response> logout();
 }
