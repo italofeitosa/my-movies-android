@@ -1,5 +1,9 @@
 package br.com.wellingtoncosta.mymovies.exception;
 
+import android.util.Log;
+
+import okhttp3.ResponseBody;
+
 /**
  * @author Wellington Costa on 01/05/17.
  */
@@ -18,6 +22,11 @@ public class ErrorResponse {
     }
 
     public String getMessage() {
+        if (message.contains(":")) {
+            int index = message.indexOf(":");
+            return message.substring(index +2);
+        }
+
         return message;
     }
 
