@@ -1,10 +1,11 @@
 package br.com.wellingtoncosta.mymovies.retrofit;
 
-import android.graphics.Movie;
-
 import java.util.List;
 
 import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
+import br.com.wellingtoncosta.mymovies.domain.FavoriteMovieTO;
+import br.com.wellingtoncosta.mymovies.domain.Movie;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.http.Body;
@@ -22,30 +23,21 @@ public interface MovieService {
     String ENDPOINT_FAVORITE_MOVIES = "api/movies/favorites";
 
     @GET(ENDPOINT_MOVIES)
-    Call<Movie> getAllMovies();
+    Call<List<Movie>> getAllMovies();
 
     @GET(ENDPOINT_MOVIES + "/{id}")
-    Call<Movie> findMovieById(@Path("id") Long id);
+    Call<Movie> getMovieById(@Path("id") Long id);
 
     @GET(ENDPOINT_MOVIES + "/name/{name}")
-    Call<Movie> getAllMoviesByName(@Path("name") String name);
+    Call<List<Movie>> getAllMoviesByName(@Path("name") String name);
 
     @GET(ENDPOINT_FAVORITE_MOVIES)
-    Call<List<FavoriteMovie>> getAllFavoriteMovies();
-
-    @GET(ENDPOINT_FAVORITE_MOVIES + "/{id}")
-    Call<FavoriteMovie> findFavoriteMovieById(@Path("id") Long id);
-
-    @GET(ENDPOINT_FAVORITE_MOVIES + "/movie/{id}")
-    Call<FavoriteMovie> findFavoriteMovieByMovieId(@Path("id") Long movieId);
-
-    @GET(ENDPOINT_FAVORITE_MOVIES + "/name/{name}")
-    Call<List<FavoriteMovie>> getFavoriteMoviesByName(@Path("name") String name);
+    Call<List<FavoriteMovieTO>> getAllFavoriteMovies();
 
     @POST(ENDPOINT_FAVORITE_MOVIES)
-    Call<FavoriteMovie> favoriteMovie(@Body Movie movie);
+    Call<ResponseBody> favoriteMovie(@Body Movie movie);
 
     @DELETE(ENDPOINT_FAVORITE_MOVIES + "/{id}")
-    Call<Response> unfavoriteMovie(@Path("id") Long id);
+    Call<ResponseBody> unfavoriteMovie(@Path("id") Long movieId);
 
 }
