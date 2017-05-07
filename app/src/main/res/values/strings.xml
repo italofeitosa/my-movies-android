@@ -19,10 +19,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="new_user_label">Novo usuário? Cadastre-se agora!</string>
     <string name="no_favorite_movies">Sem filmes favoritos</string>
+    <string name="no_internet_connection">Sem conexão com a internet</string>
     <string name="no_movies">Sem filmes cadastrados</string>
     <string name="password">Senha</string>
     <string name="register_new_user">Novo Usuário</string>
     <string name="register">Cadastrar</string>
     <string name="save_data_local_failure">Não foi possível salvar os dados.</string>
     <string name="server_communication_error">Não foi possível se conectar com o servidor.</string>
+    <string name="server_error">Houve uma falha no servidor.</string>
 </resources>
