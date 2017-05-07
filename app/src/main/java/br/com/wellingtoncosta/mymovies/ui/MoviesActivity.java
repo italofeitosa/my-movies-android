@@ -87,7 +87,9 @@ public class MoviesActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen()) {
+        if (searchView.isSearchOpen()) {
+            searchView.closeSearch();
+        } else if (drawer.isDrawerOpen()) {
             drawer.closeDrawer();
         } else {
             super.onBackPressed();
