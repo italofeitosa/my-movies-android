@@ -1,22 +1,24 @@
 package br.com.wellingtoncosta.mymovies.domain;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
  * @author Wellington Costa on 30/04/17.
  */
-public class Movie extends RealmObject {
+public class Movie {
 
-    @PrimaryKey
     private Long id;
 
-    private String name;
+    private String title;
 
     private String year;
 
     private String genre;
 
+    private boolean favorite;
+
+
+    public Movie() {
+        this.favorite = false;
+    }
 
     public Long getId() {
         return id;
@@ -26,12 +28,12 @@ public class Movie extends RealmObject {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getYear() {
@@ -50,4 +52,11 @@ public class Movie extends RealmObject {
         this.genre = genre;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
 }
