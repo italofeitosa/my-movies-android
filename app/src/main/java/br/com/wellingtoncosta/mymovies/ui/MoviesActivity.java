@@ -8,10 +8,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -36,6 +39,9 @@ public class MoviesActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    @BindView(R.id.searchView)
+    MaterialSearchView searchView;
+
     @BindView(R.id.content_movies)
     RelativeLayout contentMovies;
 
@@ -59,13 +65,24 @@ public class MoviesActivity extends AppCompatActivity {
         ((Application) getApplication()).component().inject(MoviesActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
 
         moviesFragment = new MoviesFragment();
         favoriteMoviesFragment = new FavoriteMoviesFragment();
 
         setupMaterialDrawer();
+        setupSearchView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
+        return true;
     }
 
     @Override
@@ -75,6 +92,33 @@ public class MoviesActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void setupSearchView() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                moviesFragment.setQuery(query);
+                moviesFragment.loadMovies();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() { }
+
+            @Override
+            public void onSearchViewClosed() {
+                moviesFragment.setQuery(null);
+                moviesFragment.loadMovies();
+            }
+        });
     }
 
     private void setupMaterialDrawer() {

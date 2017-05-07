@@ -24,6 +24,7 @@ import br.com.wellingtoncosta.mymovies.ui.adapter.MoviesAdapter;
 import br.com.wellingtoncosta.mymovies.ui.adapter.OnFavoriteClickListenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,6 +44,10 @@ public class MoviesFragment extends Fragment {
     @Inject
     MovieService service;
 
+    private Unbinder unbinder;
+
+    private String query;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,13 +58,19 @@ public class MoviesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ((Application) getContext().getApplicationContext()).component().inject(MoviesFragment.this);
         View view = inflater.inflate(R.layout.fragment_movies, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         setupSwipeRefreshLayout();
         setupRecyclerView();
         loadMovies();
 
         return view;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        unbinder.unbind();
     }
 
     private void setupSwipeRefreshLayout() {
@@ -80,8 +91,16 @@ public class MoviesFragment extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    private void loadMovies() {
-        service.getAllMovies().enqueue(new Callback<List<Movie>>() {
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public void loadMovies() {
+        Call<List<Movie>> call = (query == null || query.isEmpty()  ) ?
+                service.getAllMovies() :
+                service.getAllMoviesByName(query);
+
+        call.enqueue(new Callback<List<Movie>>() {
             @Override
             public void onResponse(Call<List<Movie>> call, Response<List<Movie>> response) {
                 swipeRefreshLayout.setRefreshing(false);
