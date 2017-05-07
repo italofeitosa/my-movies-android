@@ -8,6 +8,7 @@ import br.com.wellingtoncosta.mymovies.ui.LoginActivity;
 import br.com.wellingtoncosta.mymovies.ui.MoviesActivity;
 import br.com.wellingtoncosta.mymovies.ui.SplashActivity;
 import br.com.wellingtoncosta.mymovies.ui.UserRegistrationActivity;
+import br.com.wellingtoncosta.mymovies.ui.fragment.MoviesFragment;
 import dagger.Component;
 
 /**
@@ -22,5 +23,6 @@ public interface AppComponent {
     void inject(LoginActivity activity);
     void inject(UserRegistrationActivity activity);
     void inject(MoviesActivity activity);
+    void inject(MoviesFragment fragment);
 
 }
