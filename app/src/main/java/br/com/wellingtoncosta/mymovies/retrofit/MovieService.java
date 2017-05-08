@@ -2,12 +2,10 @@ package br.com.wellingtoncosta.mymovies.retrofit;
 
 import java.util.List;
 
-import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
 import br.com.wellingtoncosta.mymovies.domain.FavoriteMovieTO;
 import br.com.wellingtoncosta.mymovies.domain.Movie;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -28,8 +26,8 @@ public interface MovieService {
     @GET(ENDPOINT_MOVIES + "/{id}")
     Call<Movie> getMovieById(@Path("id") Long id);
 
-    @GET(ENDPOINT_MOVIES + "/name/{name}")
-    Call<List<Movie>> getAllMoviesByName(@Path("name") String name);
+    @GET(ENDPOINT_MOVIES + "/title/{title}")
+    Call<List<Movie>> getAllMoviesByName(@Path("title") String title);
 
     @GET(ENDPOINT_FAVORITE_MOVIES)
     Call<List<FavoriteMovieTO>> getAllFavoriteMovies();
