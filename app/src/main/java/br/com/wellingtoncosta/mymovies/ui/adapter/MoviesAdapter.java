@@ -79,6 +79,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 @Override
                 public void onClick(View v) {
                     listenter.onClick(v, movie);
+                    favoriteButton.setClickable(false);
                 }
             });
         }
