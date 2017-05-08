@@ -2,29 +2,18 @@ package br.com.wellingtoncosta.mymovies.ui.fragment;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collections;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.Movie;
-import br.com.wellingtoncosta.mymovies.retrofit.MovieService;
 import br.com.wellingtoncosta.mymovies.ui.adapter.MoviesAdapter;
 import br.com.wellingtoncosta.mymovies.ui.adapter.OnFavoriteClickListenter;
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,69 +22,24 @@ import retrofit2.Response;
 /**
  * @author Wellington Costa on 06/05/2017
  */
-public class MoviesFragment extends Fragment {
-
-    @BindView(R.id.swipeRefreshLayout)
-    SwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.movies_list)
-    RecyclerView recyclerView;
-
-    @Inject
-    MovieService service;
-
-    private Unbinder unbinder;
-
-    private String query;
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+public class MoviesFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ((Application) getContext().getApplicationContext()).component().inject(MoviesFragment.this);
+
         View view = inflater.inflate(R.layout.fragment_movies, container, false);
+
         unbinder = ButterKnife.bind(this, view);
 
         setupSwipeRefreshLayout();
         setupRecyclerView();
-        loadMovies();
+        loadData();
 
         return view;
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        unbinder.unbind();
-    }
-
-    private void setupSwipeRefreshLayout() {
-        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                loadMovies();
-            }
-        });
-    }
-
-    private void setupRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), layoutManager.getOrientation());
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addItemDecoration(dividerItemDecoration);
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public void loadMovies() {
+    public void loadData() {
         Call<List<Movie>> call = (query == null || query.isEmpty()  ) ?
                 service.getAllMovies() :
                 service.getAllMoviesByName(query);
@@ -107,15 +51,13 @@ public class MoviesFragment extends Fragment {
                 if (response.isSuccessful()) {
                     recyclerView.setAdapter(new MoviesAdapter(response.body(), onFavoriteClick()));
                 } else {
-                    Snackbar.make(recyclerView, R.string.server_error, Snackbar.LENGTH_LONG).show();
+                    onResponseServerError();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Movie>> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(recyclerView, R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
-                recyclerView.setAdapter(new MoviesAdapter(Collections.<Movie>emptyList(), null));
+                onLoadDataFailure();
             }
         });
     }
@@ -133,7 +75,7 @@ public class MoviesFragment extends Fragment {
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        loadMovies();
+                        loadData();
                     }
 
                     @Override
