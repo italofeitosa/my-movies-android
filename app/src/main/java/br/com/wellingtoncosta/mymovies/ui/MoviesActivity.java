@@ -29,6 +29,7 @@ import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
 import br.com.wellingtoncosta.mymovies.domain.User;
 import br.com.wellingtoncosta.mymovies.retrofit.AuthenticationService;
 import br.com.wellingtoncosta.mymovies.ui.fragment.FavoriteMoviesFragment;
+import br.com.wellingtoncosta.mymovies.ui.fragment.ListFragment;
 import br.com.wellingtoncosta.mymovies.ui.fragment.MoviesFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +56,8 @@ public class MoviesActivity extends AppCompatActivity {
     SharedPreferences preferences;
 
     private Drawer drawer;
+
+    private ListFragment currentFragment;
 
     private MoviesFragment moviesFragment;
 
@@ -100,8 +103,8 @@ public class MoviesActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                moviesFragment.setQuery(query);
-                moviesFragment.loadMovies();
+                currentFragment.setQuery(query);
+                currentFragment.loadData();
                 return true;
             }
 
@@ -117,8 +120,8 @@ public class MoviesActivity extends AppCompatActivity {
 
             @Override
             public void onSearchViewClosed() {
-                moviesFragment.setQuery(null);
-                moviesFragment.loadMovies();
+                currentFragment.setQuery(null);
+                currentFragment.loadData();
             }
         });
     }
@@ -161,8 +164,11 @@ public class MoviesActivity extends AppCompatActivity {
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(
                                 R.id.content_movies,
-                                moviesFragment
+                                moviesFragment,
+                                "MOVIES_FRAGMENT"
                         );
+
+                        currentFragment = moviesFragment;
                         transaction.commit();
                         return false;
                     }
@@ -180,8 +186,10 @@ public class MoviesActivity extends AppCompatActivity {
                         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                         transaction.replace(
                                 R.id.content_movies,
-                                favoriteMoviesFragment
+                                favoriteMoviesFragment,
+                                "FAVORITE_MOVIES_FRAGMENT"
                         );
+                        currentFragment = favoriteMoviesFragment;
                         transaction.commit();
                         return false;
                     }
