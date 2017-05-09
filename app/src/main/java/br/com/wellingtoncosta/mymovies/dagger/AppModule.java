@@ -2,6 +2,9 @@ package br.com.wellingtoncosta.mymovies.dagger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 import javax.inject.Singleton;
 
@@ -38,6 +41,15 @@ public class AppModule {
     @Singleton
     SharedPreferences provideSharedPreferences() {
         return application.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    @Singleton
+    ImagePipelineConfig provideImagePipelineConfig () {
+        return ImagePipelineConfig.newBuilder(application)
+                .setBitmapsConfig(Bitmap.Config.RGB_565)
+                .setDownsampleEnabled(true)
+                .build();
     }
 
 }

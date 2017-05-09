@@ -27,13 +27,16 @@ public interface MovieService {
     Call<Movie> getMovieById(@Path("id") Long id);
 
     @GET(ENDPOINT_MOVIES + "/title/{title}")
-    Call<List<Movie>> getAllMoviesByName(@Path("title") String title);
+    Call<List<Movie>> getAllMoviesByTitle(@Path("title") String title);
 
     @GET(ENDPOINT_FAVORITE_MOVIES)
     Call<List<FavoriteMovieTO>> getAllFavoriteMovies();
 
     @POST(ENDPOINT_FAVORITE_MOVIES)
     Call<ResponseBody> favoriteMovie(@Body Movie movie);
+
+    @GET(ENDPOINT_FAVORITE_MOVIES + "/title/{title}")
+    Call<List<FavoriteMovieTO>> getAllFavoriteMoviesByTitle(@Path("title") String title);
 
     @DELETE(ENDPOINT_FAVORITE_MOVIES + "/{id}")
     Call<ResponseBody> unfavoriteMovie(@Path("id") Long movieId);

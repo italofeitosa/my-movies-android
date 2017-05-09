@@ -13,11 +13,26 @@ public class FavoriteMovie extends RealmObject {
 
     private Long userId;
 
-    private String movieName;
+    private String movieTitle;
 
     private String movieYear;
 
     private String movieGenre;
+
+    private String movieImageUrl;
+
+
+    public FavoriteMovie() {}
+
+    public FavoriteMovie(FavoriteMovieTO favoriteMovieTO) {
+        this.id = favoriteMovieTO.getId();
+        this.userId = favoriteMovieTO.getUser().getId();
+        this.movieGenre = favoriteMovieTO.getMovie().getGenre();
+        this.movieImageUrl = favoriteMovieTO.getMovie().getImageUrl();
+        this.movieTitle = favoriteMovieTO.getMovie().getTitle();
+        this.movieYear = favoriteMovieTO.getMovie().getYear();
+    }
+
 
     public Long getId() {
         return id;
@@ -35,12 +50,12 @@ public class FavoriteMovie extends RealmObject {
         this.userId = userId;
     }
 
-    public String getMovieName() {
-        return movieName;
+    public String getMovieTitle() {
+        return movieTitle;
     }
 
-    public void setMovieName(String movieName) {
-        this.movieName = movieName;
+    public void setMovieTitle(String movieTitle) {
+        this.movieTitle = movieTitle;
     }
 
     public String getMovieYear() {
@@ -59,4 +74,11 @@ public class FavoriteMovie extends RealmObject {
         this.movieGenre = movieGenre;
     }
 
+    public String getMovieImageUrl() {
+        return movieImageUrl;
+    }
+
+    public void setMovieImageUrl(String movieImageUrl) {
+        this.movieImageUrl = movieImageUrl;
+    }
 }

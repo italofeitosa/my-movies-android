@@ -1,12 +1,10 @@
 package br.com.wellingtoncosta.mymovies.ui.adapter;
 
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -19,43 +17,43 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import java.util.List;
 
 import br.com.wellingtoncosta.mymovies.R;
-import br.com.wellingtoncosta.mymovies.domain.Movie;
-import butterknife.BindDrawable;
+import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
+import br.com.wellingtoncosta.mymovies.ui.listener.OnImageClickListenter;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
  * @author Wellington Costa on 06/05/2017
  */
-public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAdapter.MoviesViewHolder> {
+public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAdapter.FavoriteMoviesViewHolder> {
 
-    private List<Movie> movies;
-    private OnFavoriteClickListenter listenter;
+    private List<FavoriteMovie> favoriteMovies;
+    private OnImageClickListenter imageClickListenter;
 
-    public FavoriteMoviesAdapter(List<Movie> movies, OnFavoriteClickListenter listenter) {
-        this.movies = movies;
-        this.listenter = listenter;
+    public FavoriteMoviesAdapter(List<FavoriteMovie> favoriteMovies, OnImageClickListenter imageClickListenter) {
+        this.favoriteMovies = favoriteMovies;
+        this.imageClickListenter = imageClickListenter;
     }
 
     @Override
     public int getItemCount() {
-        return this.movies.size();
+        return this.favoriteMovies.size();
     }
 
     @Override
-    public FavoriteMoviesAdapter.MoviesViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public FavoriteMoviesAdapter.FavoriteMoviesViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View view = inflater.inflate(R.layout.list_movies_item, viewGroup, false);
-        return new MoviesViewHolder(view);
+        View view = inflater.inflate(R.layout.list_favorite_movies_item, viewGroup, false);
+        return new FavoriteMoviesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MoviesViewHolder viewHolder, int position) {
-        viewHolder.bind(this.movies.get(position), listenter);
+    public void onBindViewHolder(FavoriteMoviesViewHolder viewHolder, int position) {
+        viewHolder.bind(this.favoriteMovies.get(position), imageClickListenter);
     }
 
 
-    static class MoviesViewHolder extends RecyclerView.ViewHolder {
+    static class FavoriteMoviesViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.movieImage)
         SimpleDraweeView movieImage;
@@ -66,49 +64,37 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
         @BindView(R.id.movieGenre)
         TextView movieGenre;
 
-        @BindView(R.id.favoriteButton)
-        ImageView favoriteButton;
-
-        @BindDrawable(R.drawable.ic_favorite_border)
-        Drawable favoriteBorder;
-
-        @BindDrawable(R.drawable.ic_favorite_red)
-        Drawable favoriteRed;
-
-        MoviesViewHolder(View view) {
+        FavoriteMoviesViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
 
-        void bind(final Movie movie, final OnFavoriteClickListenter listenter) {
-            movieTitle.setText(movie.getTitle());
-            movieGenre.setText(movie.getGenre());
-
-            favoriteButton.setImageDrawable(movie.isFavorite() ? favoriteRed : favoriteBorder);
-
-            favoriteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listenter.onClick(v, movie);
-                    favoriteButton.setClickable(false);
-                }
-            });
-
-            loadMovieImage();
+        void bind(final FavoriteMovie favoriteMovie, final OnImageClickListenter imageClickListenter) {
+            movieTitle.setText(favoriteMovie.getMovieTitle());
+            movieGenre.setText(favoriteMovie.getMovieGenre());
+            loadMovieImage(favoriteMovie.getMovieImageUrl(), imageClickListenter);
         }
 
-        private void loadMovieImage() {
-            Uri imageUri = Uri.parse("http://lorempixel.com/200/200/sports");
+        private void loadMovieImage(final String imageUrl, final OnImageClickListenter imageClickListenter) {
+            final Uri imageUri = Uri.parse(String.valueOf(imageUrl));
 
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(imageUri)
-                    .setResizeOptions(new ResizeOptions(64, 64))
+                    .setResizeOptions(new ResizeOptions(100, 120))
                     .setProgressiveRenderingEnabled(true)
                     .setLocalThumbnailPreviewsEnabled(true)
                     .build();
 
-            AbstractDraweeController newController = Fresco.newDraweeControllerBuilder()
+            AbstractDraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(request)
                     .build();
+
+            movieImage.setController(controller);
+            movieImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imageClickListenter.onClick(v, imageUrl);
+                }
+            });
         }
     }
 }

@@ -13,6 +13,8 @@ public class Movie {
 
     private String genre;
 
+    private String imageUrl;
+
     private boolean favorite;
 
 
@@ -50,6 +52,14 @@ public class Movie {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public boolean isFavorite() {
