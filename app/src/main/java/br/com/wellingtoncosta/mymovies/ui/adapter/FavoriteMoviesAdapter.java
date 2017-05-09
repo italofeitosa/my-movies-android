@@ -64,6 +64,9 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
         @BindView(R.id.movieGenre)
         TextView movieGenre;
 
+        @BindView(R.id.movieYear)
+        TextView movieYear;
+
         FavoriteMoviesViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -72,6 +75,7 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
         void bind(final FavoriteMovie favoriteMovie, final OnImageClickListenter imageClickListenter) {
             movieTitle.setText(favoriteMovie.getMovieTitle());
             movieGenre.setText(favoriteMovie.getMovieGenre());
+            movieYear.setText(favoriteMovie.getMovieYear());
             loadMovieImage(favoriteMovie.getMovieImageUrl(), imageClickListenter);
         }
 

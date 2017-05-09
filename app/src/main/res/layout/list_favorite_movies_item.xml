@@ -24,7 +24,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginEnd="10dp"
             android:layout_gravity="center"
-            app:actualImageScaleType="fitCenter"
+            app:actualImageScaleType="centerCrop"
             app:failureImage="@drawable/no_image" />
 
         <LinearLayout
