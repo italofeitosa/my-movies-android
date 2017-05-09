@@ -1,4 +1,4 @@
-package br.com.wellingtoncosta.mymovies.ui.adapter;
+package br.com.wellingtoncosta.mymovies.ui.listener;
 
 import android.view.View;
 
