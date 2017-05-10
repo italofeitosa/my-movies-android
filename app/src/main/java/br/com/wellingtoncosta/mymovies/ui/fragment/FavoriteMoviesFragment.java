@@ -1,9 +1,13 @@
 package br.com.wellingtoncosta.mymovies.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,9 @@ import br.com.wellingtoncosta.mymovies.domain.FavoriteMovieTO;
 import br.com.wellingtoncosta.mymovies.ui.adapter.FavoriteMoviesAdapter;
 import br.com.wellingtoncosta.mymovies.ui.listener.OnImageClickListenter;
 import butterknife.ButterKnife;
+import io.realm.Case;
+import io.realm.Realm;
+import io.realm.RealmQuery;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,6 +41,9 @@ public class FavoriteMoviesFragment extends ListFragment {
 
     @Inject
     Gson gson;
+
+    @Inject
+    Realm realm;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,14 +59,49 @@ public class FavoriteMoviesFragment extends ListFragment {
         return view;
     }
 
+    private boolean hasQuery() {
+        return !(query == null || query.isEmpty());
+    }
+
     public void loadData() {
         swipeRefreshLayout.setRefreshing(true);
 
-        Call<List<FavoriteMovieTO>> call = (query == null || query.isEmpty()  ) ?
-                service.getAllFavoriteMovies() :
-                service.getAllFavoriteMoviesByTitle(query);
+        if (isConnected()) {
+            if (hasQuery()) {
+                loadFavoriteMoviesByTitle();
+            } else {
+                loadAllFavoriteMovies();
+            }
+        } else {
+            loadFavoriteMoviesLocal();
+        }
+    }
 
-        call.enqueue(new Callback<List<FavoriteMovieTO>>() {
+    private void loadAllFavoriteMovies() {
+        service.getAllFavoriteMovies().enqueue(new Callback<List<FavoriteMovieTO>>() {
+            @Override
+            public void onResponse(Call<List<FavoriteMovieTO>> call, Response<List<FavoriteMovieTO>> response) {
+                if (response.isSuccessful()) {
+                    List<FavoriteMovie> favoriteMovies = adjustFavoriteMovies(response.body());
+                    recyclerView.setAdapter(new FavoriteMoviesAdapter(favoriteMovies, onImageClick()));
+                    saveFavoriteMoviesLocal(favoriteMovies);
+                } else {
+                    Snackbar.make(recyclerView, R.string.server_error, Snackbar.LENGTH_LONG).show();
+                    recyclerView.setAdapter(new FavoriteMoviesAdapter(Collections.<FavoriteMovie>emptyList(), null));
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Call<List<FavoriteMovieTO>> call, Throwable t) {
+                onRequestFailure();
+            }
+        });
+    }
+
+    private void loadFavoriteMoviesByTitle() {
+        service.getAllFavoriteMoviesByTitle(query).enqueue(new Callback<List<FavoriteMovieTO>>() {
             @Override
             public void onResponse(Call<List<FavoriteMovieTO>> call, Response<List<FavoriteMovieTO>> response) {
                 swipeRefreshLayout.setRefreshing(false);
@@ -72,11 +117,15 @@ public class FavoriteMoviesFragment extends ListFragment {
 
             @Override
             public void onFailure(Call<List<FavoriteMovieTO>> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                Snackbar.make(recyclerView, R.string.no_internet_connection, Snackbar.LENGTH_LONG).show();
-                recyclerView.setAdapter(new FavoriteMoviesAdapter(Collections.<FavoriteMovie>emptyList(), null));
+                onRequestFailure();
             }
         });
+    }
+
+    private void onRequestFailure() {
+        swipeRefreshLayout.setRefreshing(false);
+        Snackbar.make(recyclerView, R.string.server_communication_error, Snackbar.LENGTH_LONG).show();
+        recyclerView.setAdapter(new FavoriteMoviesAdapter(Collections.<FavoriteMovie>emptyList(), null));
     }
 
     private List<FavoriteMovie> adjustFavoriteMovies(List<FavoriteMovieTO> favoriteMovieTOs) {
@@ -102,37 +151,41 @@ public class FavoriteMoviesFragment extends ListFragment {
         };
     }
 
-    /*private void saveFavoriteMoviesLocal() {
-        service.getAllFavoriteMovies().enqueue(new Callback<List<FavoriteMovieTO>>() {
+    private boolean isConnected() {
+        ConnectivityManager connectivityManager = ((ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE));
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected();
+    }
+
+    private void loadFavoriteMoviesLocal() {
+        RealmQuery<FavoriteMovie> favoriteMovieRealmQuery = realm.where(FavoriteMovie.class);
+
+        if (hasQuery()) {
+            favoriteMovieRealmQuery.contains("movieTitle", query, Case.INSENSITIVE);
+        }
+
+        List<FavoriteMovie> favoriteMovies = favoriteMovieRealmQuery.findAll();
+        recyclerView.setAdapter(new FavoriteMoviesAdapter(favoriteMovies, null));
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    private void saveFavoriteMoviesLocal(final List<FavoriteMovie> favoriteMovies ) {
+        realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
-            public void onResponse(Call<List<FavoriteMovieTO>> call, Response<List<FavoriteMovieTO>> response) {
-                final List<FavoriteMovieTO> favoriteMovies = response.body();
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm bgRealm) {
-                        for (FavoriteMovieTO favoriteMovieTO : favoriteMovies) {
-                            FavoriteMovie favoriteMovie = realm.createObject(FavoriteMovie.class);
-                            favoriteMovie.setId(favoriteMovieTO.getId());
-                            favoriteMovie.setMovieName(favoriteMovieTO.getMovie().getName());
-                            favoriteMovie.setMovieGenre(favoriteMovieTO.getMovie().getGenre());
-                            favoriteMovie.setMovieYear(favoriteMovieTO.getMovie().getYear());
-                            favoriteMovie.setUserId(favoriteMovieTO.getUser().getId());
-                        }
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        Log.e("exception", error.getMessage(), error);
-                        Snackbar.make(recyclerView, R.string.save_data_local_failure, Snackbar.LENGTH_LONG).show();
-                    }
-                });
+            public void execute(Realm bgRealm) {
+                bgRealm.delete(FavoriteMovie.class);
+
+                for (FavoriteMovie favoriteMovie : favoriteMovies) {
+                    bgRealm.copyToRealm(favoriteMovie);
+                }
             }
-
+        }, new Realm.Transaction.OnError() {
             @Override
-            public void onFailure(Call<List<FavoriteMovieTO>> call, Throwable t) {
-
+            public void onError(Throwable error) {
+                Log.e("exception", error.getMessage(), error);
+                Snackbar.make(recyclerView, R.string.save_data_local_failure, Snackbar.LENGTH_LONG).show();
             }
         });
-    }*/
+    }
 
 }

@@ -93,12 +93,15 @@ public class FavoriteMoviesAdapter extends RecyclerView.Adapter<FavoriteMoviesAd
                     .build();
 
             movieImage.setController(controller);
-            movieImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    imageClickListenter.onClick(v, imageUrl);
-                }
-            });
+
+            if (imageClickListenter != null) {
+                movieImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        imageClickListenter.onClick(v, imageUrl);
+                    }
+                });
+            }
         }
     }
 }

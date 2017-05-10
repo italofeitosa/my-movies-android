@@ -24,7 +24,7 @@
     <string name="password">Senha</string>
     <string name="register_new_user">Novo Usuário</string>
     <string name="register">Cadastrar</string>
-    <string name="save_data_local_failure">Não foi possível salvar os dados.</string>
+    <string name="save_data_local_failure">Não foi possível salvar os dados no dispositivo.</string>
     <string name="server_communication_error">Não foi possível se conectar com o servidor.</string>
     <string name="server_error">Houve uma falha no servidor.</string>
 </resources>
