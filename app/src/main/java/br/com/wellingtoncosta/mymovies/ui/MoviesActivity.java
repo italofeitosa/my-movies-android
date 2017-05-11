@@ -234,4 +234,7 @@ public class MoviesActivity extends AppCompatActivity {
         });
     }
 
+    public Toolbar getToolbar() {
+        return toolbar;
+    }
 }

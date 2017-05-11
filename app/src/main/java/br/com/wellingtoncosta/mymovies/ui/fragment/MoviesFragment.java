@@ -14,6 +14,7 @@ import java.util.List;
 import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.Movie;
+import br.com.wellingtoncosta.mymovies.ui.MoviesActivity;
 import br.com.wellingtoncosta.mymovies.ui.adapter.MoviesAdapter;
 import br.com.wellingtoncosta.mymovies.ui.listener.OnFavoriteClickListenter;
 import br.com.wellingtoncosta.mymovies.ui.listener.OnImageClickListenter;
@@ -38,6 +39,8 @@ public class MoviesFragment extends ListFragment {
 
         setupSwipeRefreshLayout();
         setupRecyclerView();
+
+        ((MoviesActivity) getActivity()).getToolbar().setTitle(R.string.my_movies);
 
         return view;
     }

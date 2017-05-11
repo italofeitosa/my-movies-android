@@ -24,6 +24,7 @@ import br.com.wellingtoncosta.mymovies.Application;
 import br.com.wellingtoncosta.mymovies.R;
 import br.com.wellingtoncosta.mymovies.domain.FavoriteMovie;
 import br.com.wellingtoncosta.mymovies.domain.FavoriteMovieTO;
+import br.com.wellingtoncosta.mymovies.ui.MoviesActivity;
 import br.com.wellingtoncosta.mymovies.ui.adapter.FavoriteMoviesAdapter;
 import br.com.wellingtoncosta.mymovies.ui.listener.OnImageClickListenter;
 import butterknife.ButterKnife;
@@ -55,6 +56,8 @@ public class FavoriteMoviesFragment extends ListFragment {
 
         setupSwipeRefreshLayout();
         setupRecyclerView();
+
+        ((MoviesActivity) getActivity()).getToolbar().setTitle(R.string.my_favorite_movies);
 
         return view;
     }
