@@ -28,7 +28,9 @@ Run app with `productionDebug` build variant to consume the [API](https://github
 
 > Dagger 2
 
-> Retrofit
+> Retrofit 2
+
+> OkHttp 3
 
 > Realm
 
