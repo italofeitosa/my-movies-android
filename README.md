@@ -15,7 +15,7 @@ Run app with `developmentDebug` build variant to consume the [API](https://githu
 
 ### `Production`
 
-Run app with `productionDebug` build variant to consume the [API](https://github.com/WellingtonCosta/my-movies-api) in [production environment](https://github.com/WellingtonCosta/my-movies-api/blob/master/README.md#production) on [Heroku](https://my-movies-api.herokuapp.com/).<br>
+Run app with `productionDebug` build variant to consume the [API](https://github.com/WellingtonCosta/my-movies-api) in [production environment](https://github.com/WellingtonCosta/my-movies-api/blob/master/README.md#production) avaliable on [Heroku](https://my-movies-api.herokuapp.com/).<br>
 
 ## Technologies
 
