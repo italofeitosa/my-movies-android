@@ -20,7 +20,7 @@ Run app with `productionDebug` build variant to consume the [API](https://github
 
 ## Considerations
 
-Due to [Heroku Free Dynos](#https://devcenter.heroku.com/articles/free-dyno-hours) sleep after no traffic in a 30 minute period, the application may take a time to respond.
+Due to [Heroku Free Dynos](https://devcenter.heroku.com/articles/free-dyno-hours) sleep after no traffic in a 30 minute period, the application may take a time to respond.
 
 ## Technologies
 
