@@ -5,6 +5,7 @@
 - [Available Build Variants](#available-build-variants)
   - [Development](#development)
   - [Production](#production)
+- [Considerations](#considerations)
 - [Technologies](#technologies)
 
 ## Available Build Variants
@@ -16,6 +17,10 @@ Run app with `developmentDebug` build variant to consume the [API](https://githu
 ### `Production`
 
 Run app with `productionDebug` build variant to consume the [API](https://github.com/WellingtonCosta/my-movies-api) in [production environment](https://github.com/WellingtonCosta/my-movies-api/blob/master/README.md#production) avaliable on [Heroku](https://my-movies-api.herokuapp.com/).<br>
+
+## Considerations
+
+Due to [Heroku Free Dynos](#https://devcenter.heroku.com/articles/free-dyno-hours) sleep after no traffic in a 30 minute period, the application may take a time to respond.
 
 ## Technologies
 
